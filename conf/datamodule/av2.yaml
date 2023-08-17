@@ -1,0 +1,10 @@
+_target_: src.datamodule.av2_datamodule.Av2DataModule
+
+data_root: ${data_root}
+data_folder: ${model.name}
+train_batch_size: ${batch_size}
+val_batch_size: ${batch_size}
+test_batch_size: ${batch_size}
+shuffle: True
+num_workers: ${num_workers}
+pin_memory: True

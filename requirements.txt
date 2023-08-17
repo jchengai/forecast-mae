@@ -1,0 +1,13 @@
+ray
+tqdm
+hydra-core==1.2.0
+pytorch-lightning==1.8.2
+setuptools==59.5.0
+protobuf==3.19.0
+rich==12.4.4
+wandb==0.13.5
+plotly
+matplotlib==3.4.3
+timm
+plotly
+torchmetrics==0.10.2
