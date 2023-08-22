@@ -13,7 +13,7 @@
     <a href="https://iccv2023.thecvf.com/">
     <img src="https://img.shields.io/badge/ICCV-2023-blue?style=flat">
     </a>
-    <a href='todo' style='padding-left: 0.5rem;'>
+    <a href='https://arxiv.org/pdf/2308.09882.pdf' style='padding-left: 0.5rem;'>
       <img src='https://img.shields.io/badge/arXiv-PDF-red?style=flat&logo=arXiv&logoColor=wihte' alt='arXiv PDF'>
     </a>
   </p>
