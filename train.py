@@ -27,7 +27,7 @@ def main(conf):
             resume=conf.checkpoint is not None,
         )
     else:
-        logger = (TensorBoardLogger(save_dir=output_dir, name="logs"),)
+        logger = TensorBoardLogger(save_dir=output_dir, name="logs")
 
     callbacks = [
         ModelCheckpoint(

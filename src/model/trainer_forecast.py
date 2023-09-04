@@ -37,6 +37,7 @@ class Trainer(pl.LightningModule):
         self.lr = lr
         self.weight_decay = weight_decay
         self.save_hyperparameters()
+        self.submission_handler = SubmissionAv2()
 
         self.net = ModelForecast(
             embed_dim=dim,
@@ -56,6 +57,14 @@ class Trainer(pl.LightningModule):
 
     def forward(self, data):
         return self.net(data)
+
+    def predict(self, data):
+        with torch.no_grad():
+            out = self.net(data)
+        predictions, prob = self.submission_handler.format_data(
+            data, out["y_hat"], out["pi"], inference=True
+        )
+        return predictions, prob
 
     def cal_loss(self, out, data):
         y_hat, pi, y_hat_others = out["y_hat"], out["pi"], out["y_hat_others"]

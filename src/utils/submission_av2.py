@@ -16,6 +16,7 @@ class SubmissionAv2:
         trajectory: Tensor,
         probability: Tensor,
         normalized_probability=False,
+        inference=False,
     ) -> None:
         """
         trajectory: (B, M, 60, 2)
@@ -49,6 +50,9 @@ class SubmissionAv2:
 
         global_trajectory = global_trajectory.detach().cpu().numpy()
         probability = probability.detach().cpu().numpy()
+
+        if inference:
+            return global_trajectory, probability
 
         for i, (scene_id, track_id) in enumerate(zip(scenario_ids, track_ids)):
             self.challenge_submission.predictions[scene_id] = {
