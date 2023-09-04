@@ -117,7 +117,7 @@ Evaluate on the validation set
 python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"'
 ```
 
-Generate submission for the AV2 single-agent motion forecasting benchmark
+## Evaluationing benchmark
 
 ```
 python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"' test=true
@@ -128,8 +128,8 @@ python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to
 For this repository, the expected performance on Argoverse 2 validation set is:
 | Models                                                                                                                                                            | minADE1 | minFDE1 | minADE6 | minFDE6 |  MR6  |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :-----: | :-----: | :-----: | :---: |
-| [Forecast-MAE (scratch)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EfJc6E-mQsBEpoFhtg_5ioABuKQ86eU84BFNLx-JcFhDoQ?e=kNsruq)   |  1.802  |  4.529  | 0.8104  |  1.430  | 0.187 |
-| [Forecast-MAE (fine-tune)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EYl6FKKGnM9Bux7cdJ756xwBsheZfoLJYZaUbJSV_5MZ2g?e=JtdTD0) |  1.744  |  4.37   | 0.7984  |  1.408  | 0.178 |
+| [Forecast-MAE (scratch)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EfJc6E-mQsBEpoFhtg_5ioABuKQ86eU84BFNLx-JcFhDoQ?e=kNsruq)   |  1.802  |  4.529  | 0.7214  |  1.430  | 0.187 |
+| [Forecast-MAE (fine-tune)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EYl6FKKGnM9Bux7cdJ756xwBsheZfoLJYZaUbJSV_5MZ2g?e=JtdTD0) |  1.744  |  4.376   | 0.7117  |  1.408  | 0.178 |
 
 You can download the checkpoints with the corresponding link.
 

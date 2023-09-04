@@ -1,7 +1,9 @@
-from typing import Any, Callable, Optional, Dict
+from typing import Any, Callable, Dict, Optional
 
 import torch
 from torchmetrics import Metric
+
+from .utils import sort_predictions
 
 
 class minADE(Metric):
@@ -15,6 +17,7 @@ class minADE(Metric):
 
     def __init__(
         self,
+        k=6,
         compute_on_step: bool = True,
         dist_sync_on_step: bool = False,
         process_group: Optional[Any] = None,
@@ -26,18 +29,18 @@ class minADE(Metric):
             process_group=process_group,
             dist_sync_fn=dist_sync_fn,
         )
+        self.k = k
         self.add_state("sum", default=torch.tensor(0.0), dist_reduce_fx="sum")
         self.add_state("count", default=torch.tensor(0), dist_reduce_fx="sum")
 
     def update(self, outputs: Dict[str, torch.Tensor], target: torch.Tensor) -> None:
         with torch.no_grad():
-            pred = outputs["y_hat"]
-            endpoint_error = torch.norm(
-                pred[..., -1, :2] - target.unsqueeze(1)[..., -1, :2], p=2, dim=-1
-            )
-            best_mode = torch.argmin(endpoint_error, dim=-1)
-            best_pred = pred[torch.arange(pred.shape[0]), best_mode]
-            self.sum += torch.norm(best_pred - target, p=2, dim=-1).mean(-1).sum()
+            pred, _ = sort_predictions(outputs["y_hat"], outputs["pi"], k=self.k)
+            ade = torch.norm(
+                pred[..., :2] - target.unsqueeze(1)[..., :2], p=2, dim=-1
+            ).mean(-1)
+            min_ade = ade.min(-1)[0]
+            self.sum += min_ade.sum()
             self.count += pred.size(0)
 
     def compute(self) -> torch.Tensor:

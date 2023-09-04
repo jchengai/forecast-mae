@@ -52,7 +52,15 @@ class Trainer(pl.LightningModule):
         if pretrained_weights is not None:
             self.net.load_from_checkpoint(pretrained_weights)
 
-        metrics = MetricCollection([minADE(), minFDE(), MR()])
+        metrics = MetricCollection(
+            {
+                "minADE1": minADE(k=1),
+                "minADE6": minADE(k=6),
+                "minFDE1": minFDE(k=1),
+                "minFDE6": minFDE(k=6),
+                "MR": MR(),
+            }
+        )
         self.val_metrics = metrics.clone(prefix="val_")
 
     def forward(self, data):
