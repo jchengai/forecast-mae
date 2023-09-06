@@ -117,7 +117,7 @@ Evaluate on the validation set
 python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"'
 ```
 
-## Evaluationing benchmark
+Generate submission file for the AV2 single-agent motion forecasting benchmark
 
 ```
 python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"' test=true
