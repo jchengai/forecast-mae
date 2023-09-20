@@ -170,7 +170,10 @@ For this repository, the expected performance on Argoverse 2 validation set is:
 
 ### Multi-agent
 
-todo
+| Models                                                                                                                                                       | AvgMinADE6 | AvgMinFDE6 | ActorMR6 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---------- | -------- |
+| [Multiagent-Baseline](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EajKZGZWtQFBhARC9CLGcIUBayB4Ij_X4QUipCf6fRk39A?e=E207gM) | 0.717      | 1.64       | 0.194    |
+
 
 You can download the checkpoints with the corresponding link.
 
