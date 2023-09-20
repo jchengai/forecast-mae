@@ -6,6 +6,7 @@ import ray
 from tqdm import tqdm
 
 from src.datamodule.av2_extractor import Av2Extractor
+from src.datamodule.av2_extractor_multiagent import Av2ExtractorMultiAgent
 from src.utils.ray_utils import ActorHandle, ProgressBar
 
 ray.init(num_cpus=16)
@@ -29,10 +30,14 @@ def preprocess(args):
     data_root = Path(args.data_root)
 
     for mode in ["train", "val", "test"]:
-        save_dir = data_root / "forecast-mae" / mode
-        save_dir.mkdir(exist_ok=True, parents=True)
+        if args.multiagent:
+            save_dir = data_root / "multiagent-baseline" / mode
+            extractor = Av2ExtractorMultiAgent(save_path=save_dir, mode=mode)
+        else:
+            save_dir = data_root / "forecast-mae" / mode
+            extractor = Av2Extractor(save_path=save_dir, mode=mode)
 
-        extractor = Av2Extractor(save_path=save_dir, mode=mode)
+        save_dir.mkdir(exist_ok=True, parents=True)
         scenario_files = glob_files(data_root, mode)
 
         if args.parallel:
@@ -55,6 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--data_root", "-d", type=str, required=True)
     parser.add_argument("--batch", "-b", type=int, default=50)
     parser.add_argument("--parallel", "-p", action="store_true")
+    parser.add_argument("--multiagent", "-m", action="store_true")
 
     args = parser.parse_args()
     preprocess(args)

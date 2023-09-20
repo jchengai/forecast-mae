@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import torch
@@ -6,8 +7,9 @@ from torch import Tensor
 
 
 class SubmissionAv2:
-    def __init__(self, save_dir: str = "", filename: str = "") -> None:
-        self.submission_file = Path(save_dir) / f"{filename}.parquet"
+    def __init__(self, save_dir: str = "") -> None:
+        stamp = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
+        self.submission_file = Path(save_dir) / f"single_agent_{stamp}.parquet"
         self.challenge_submission = ChallengeSubmission(predictions={})
 
     def format_data(

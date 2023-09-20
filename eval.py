@@ -3,8 +3,7 @@ import os
 import hydra
 import pytorch_lightning as pl
 from hydra.utils import instantiate, to_absolute_path
-
-from src.model.trainer_forecast import Trainer as Model
+from importlib import import_module
 
 
 @hydra.main(version_base=None, config_path="./conf/", config_name="config")
@@ -14,7 +13,10 @@ def main(conf):
     checkpoint = to_absolute_path(conf.checkpoint)
     assert os.path.exists(checkpoint), f"Checkpoint {checkpoint} does not exist"
 
-    model = Model.load_from_checkpoint(checkpoint, pretrained_model=None)
+    model_path = conf.model.target._target_
+    module = import_module(model_path[: model_path.rfind(".")])
+    Model: pl.LightningModule = getattr(module, model_path[model_path.rfind(".") + 1 :])
+    model = Model.load_from_checkpoint(checkpoint)
 
     trainer = pl.Trainer(
         logger=False,

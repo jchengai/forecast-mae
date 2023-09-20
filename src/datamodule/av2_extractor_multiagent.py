@@ -10,12 +10,12 @@ from av2.map.map_api import ArgoverseStaticMap
 from .av2_data_utils import (
     OBJECT_TYPE_MAP,
     OBJECT_TYPE_MAP_COMBINED,
-    LaneTypeMap,
     load_av2_df,
+    LaneTypeMap,
 )
 
 
-class Av2Extractor:
+class Av2ExtractorMultiAgent:
     def __init__(
         self,
         radius: float = 150,
@@ -44,10 +44,10 @@ class Av2Extractor:
     def get_data(self, file: Path):
         return self.process(file)
 
-    def process(self, raw_path: str, agent_id=None):
+    def process(self, raw_path: str, agent_id: str = None):
         df, am, scenario_id = load_av2_df(raw_path)
         city = df.city.values[0]
-        agent_id = df["focal_track_id"].values[0]
+        agent_id = "AV"
 
         local_df = df[df["track_id"] == agent_id].iloc
         origin = torch.tensor(
@@ -64,11 +64,16 @@ class Av2Extractor:
         timestamps = list(np.sort(df["timestep"].unique()))
         cur_df = df[df["timestep"] == timestamps[49]]
         actor_ids = list(cur_df["track_id"].unique())
+        object_category = torch.from_numpy(cur_df["object_category"].values).float()
         cur_pos = torch.from_numpy(cur_df[["position_x", "position_y"]].values).float()
+
+        scored_agents_mask = object_category > 1.5
         out_of_range = np.linalg.norm(cur_pos - origin, axis=1) > self.radius
+        out_of_range[scored_agents_mask] = False  # keep all scored agents
+
         actor_ids = [aid for i, aid in enumerate(actor_ids) if not out_of_range[i]]
-        actor_ids.remove(agent_id)
-        actor_ids = [agent_id] + actor_ids
+        av_idx = actor_ids.index(agent_id)
+        scored_agents_mask = scored_agents_mask[~out_of_range]
         num_nodes = len(actor_ids)
 
         df = df[df["track_id"].isin(actor_ids)]
@@ -127,12 +132,15 @@ class Av2Extractor:
             lane_samples = lane_positions[:, ::1, :2].view(-1, 2)
             nearest_dist = torch.cdist(x[:, 49, :2], lane_samples).min(dim=1).values
             valid_actor_mask = nearest_dist < 5
-            valid_actor_mask[0] = True  # always keep the target agent
+            valid_actor_mask[0] = True  # always keep av and scored agents
+            valid_actor_mask[scored_agents_mask] = True
 
             x = x[valid_actor_mask]
             x_heading = x_heading[valid_actor_mask]
             x_velocity = x_velocity[valid_actor_mask]
             x_attr = x_attr[valid_actor_mask]
+            actor_ids = [aid for i, aid in enumerate(actor_ids) if valid_actor_mask[i]]
+            scored_agents_mask = scored_agents_mask[valid_actor_mask]
             padding_mask = padding_mask[valid_actor_mask]
             num_nodes = x.shape[0]
 
@@ -171,16 +179,18 @@ class Av2Extractor:
             "x_velocity": x_velocity,
             "x_velocity_diff": x_velocity_diff,
             "x_padding_mask": padding_mask,
+            "x_scored": scored_agents_mask,
             "lane_positions": lane_positions,
             "lane_centers": lane_ctrs,
             "lane_angles": lane_angles,
             "lane_attr": lane_attr,
             "lane_padding_mask": lane_padding_mask,
             "is_intersections": is_intersections,
+            "av_index": torch.tensor(av_idx),
             "origin": origin.view(-1, 2),
             "theta": theta,
             "scenario_id": scenario_id,
-            "track_id": agent_id,
+            "track_id": actor_ids,
             "city": city,
         }
 

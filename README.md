@@ -25,9 +25,11 @@
 ## Highlight
 - A neat yet effective MAE-based pre-training scheme for motion forecasting.
 - A pretty simple forecasting model (basically pure transformer encoders) with relative good performance.
+- This repo also provides a exemplary multi-agent motion forecasting baseline on Argoverse 2.0 dataset.
 
 ## Getting Started
 
+- [Getting Started](#getting-started)
 - [Setup Environment](#setup-environment)
 - [Preprocess](#preprocess)
 - [Training](#training)
@@ -75,8 +77,16 @@ data_root
 
 (recommend) By default, we use [ray](https://github.com/ray-project/ray) and 16 cpu cores for preprocessing. It will take about 30 minutes to finish.
 
+### Single-agent
+
 ```
-python3 preprocess --data_root=/path/to/data_root -p
+python3 preprocess.py --data_root=/path/to/data_root -p
+```
+
+### Multi-agent
+
+```
+python3 preprocess.py --data_root=/path/to/data_root -m -p
 ```
 
 or you can disable parallel preprocessing by removing `-p`.
@@ -86,7 +96,7 @@ or you can disable parallel preprocessing by removing `-p`.
 - For single-card training, remove `gpus=4` in the following commands. `batch_size` refers to the batch size of each GPU.
 - If you use [WandB](https://wandb.ai/site), you can enable wandb logging by adding option `wandb=online`.
 
-### 1. Pre-training + fine-tuning
+### 1. Pre-training + fine-tuning (single-agent)
 
 phase 1 - pre-training:
 
@@ -103,33 +113,64 @@ phase 2 - fine-tuning:
 python3 train.py data_root=/path/to/data_root model=model_forecast gpus=4 batch_size=32 monitor=val_minFDE 'pretrained_weights="/path/to/pretrain_ckpt"'
 ```
 
-### 2. Training from scratch
+### 2. Training from scratch (single-agent)
 
 ```
 python3 train.py data_root=/path/to/data_root model=model_forecast gpus=4 batch_size=32 monitor=val_minFDE
 ```
 
+### 3. Multi-agent motion forecasting
+
+We also provide a simple multi-agent motion forecasting baseline using Forecast-MAE's backbone model.
+
+```
+python train.py data_root=/path/to/data_root model=model_forecast_mutliagent gpus=4 batch_size=32 monitor=val_AvgMinFDE
+```
+
 ## Evaluation
+
+
+### Single-agent
 
 Evaluate on the validation set
 
 ```
-python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"'
+python3 eval.py model=model_forecast data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"'
 ```
 
-Generate submission file for the AV2 single-agent motion forecasting benchmark
+Generate submission file for the AV2 multi-agent motion forecasting benchmark
 
 ```
-python3 eval.py data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"' test=true
+python3 eval.py model=model_forecast data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"' test=true
+```
+
+### Multi-agent
+
+Evaluate on the validation set
+
+```
+python3 eval.py model=model_forecast_multiagent data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"'
+```
+
+Generate submission file for the AV2 multi-agent motion forecasting benchmark
+
+```
+python3 eval.py model=model_forecast_multiagent data_root=/path/to/data_root batch_size=64 'checkpoint="/path/to/checkpoint"' test=true
 ```
 
 ## Results and checkpoints
 
 For this repository, the expected performance on Argoverse 2 validation set is:
+
+### Single-agent
 | Models                                                                                                                                                            | minADE1 | minFDE1 | minADE6 | minFDE6 |  MR6  |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-----: | :-----: | :-----: | :-----: | :---: |
 | [Forecast-MAE (scratch)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EfJc6E-mQsBEpoFhtg_5ioABuKQ86eU84BFNLx-JcFhDoQ?e=kNsruq)   |  1.802  |  4.529  | 0.7214  |  1.430  | 0.187 |
-| [Forecast-MAE (fine-tune)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EYl6FKKGnM9Bux7cdJ756xwBsheZfoLJYZaUbJSV_5MZ2g?e=JtdTD0) |  1.744  |  4.376   | 0.7117  |  1.408  | 0.178 |
+| [Forecast-MAE (fine-tune)](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EYl6FKKGnM9Bux7cdJ756xwBsheZfoLJYZaUbJSV_5MZ2g?e=JtdTD0) |  1.744  |  4.376  | 0.7117  |  1.408  | 0.178 |
+
+### Multi-agent
+
+todo
 
 You can download the checkpoints with the corresponding link.
 

@@ -64,6 +64,11 @@ def collate_fn(batch):
     ]:
         data[key] = pad_sequence([b[key] for b in batch], batch_first=True)
 
+    if "x_scored" in batch[0]:
+        data["x_scored"] = pad_sequence(
+            [b["x_scored"] for b in batch], batch_first=True
+        )
+
     if batch[0]["y"] is not None:
         data["y"] = pad_sequence([b["y"] for b in batch], batch_first=True)
 
