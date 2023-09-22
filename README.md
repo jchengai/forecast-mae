@@ -16,6 +16,9 @@
     <a href='https://arxiv.org/pdf/2308.09882.pdf' style='padding-left: 0.5rem;'>
       <img src='https://img.shields.io/badge/arXiv-PDF-red?style=flat&logo=arXiv&logoColor=wihte' alt='arXiv PDF'>
     </a>
+    <a href='https://hkustconnect-my.sharepoint.com/:b:/g/personal/jchengai_connect_ust_hk/ERCySXLweLFDgv7Ejouf-lgB1_cq4K1spcnS-bkSL2OxPA?e=DwINqh' style='padding-left: 0.5rem;'>
+      <img src='https://img.shields.io/badge/Poster-royalblue?style=flat&logo=Shotcut&logoColor=wihte' alt='arXiv PDF'>
+    </a>
   </p>
 
 <p align="center">
