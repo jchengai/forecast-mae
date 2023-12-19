@@ -354,9 +354,19 @@ class ModelMAE(nn.Module):
             + self.loss_weight[2] * lane_pred_loss
         )
 
-        return {
+        out = {
             "loss": loss,
             "hist_loss": hist_loss.item(),
             "future_loss": future_loss.item(),
             "lane_pred_loss": lane_pred_loss.item(),
         }
+
+        if not self.training:
+            out["x_hat"] = x_hat.view(B, N, 50, 2)
+            out["y_hat"] = y_hat.view(1, B, N, 60, 2)
+            out["lane_hat"] = lane_pred.view(B, M, 20, 2)
+            out["lane_keep_ids"] = lane_ids_keep_list
+            out["hist_keep_ids"] = hist_keep_ids_list
+            out["fut_keep_ids"] = fut_keep_ids_list
+
+        return out

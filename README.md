@@ -163,6 +163,10 @@ python3 eval.py model=model_forecast_multiagent data_root=/path/to/data_root bat
 
 ## Results and checkpoints
 
+MAE-pretrained_weights: [download](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaE648yceoNEq0eg9J3gRpEBTbuwvjkK3msCUZqrZgBvpw?e=kZS2uK).
+
+A visualization notebook of the mae reconstruction result can be found [here](./notebook/mae_reconstruction.ipynb).
+
 For this repository, the expected performance on Argoverse 2 validation set is:
 
 ### Single-agent
